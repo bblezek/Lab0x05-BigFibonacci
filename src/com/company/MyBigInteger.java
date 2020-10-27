@@ -29,25 +29,36 @@ public class MyBigInteger {
         return (char) (i+48);
     }
 
+    private static String formatString(char[] array){
+        int leadingZeros = 0;
+        String string = new String();
+        for(leadingZeros = 0; leadingZeros < array.length; leadingZeros++){
+            if(array[leadingZeros] != '0'){
+                break;
+            }
+        }
+        return String.valueOf(array).substring(leadingZeros);
+    }
+
     public MyBigInteger MyBigIntegerPlus(MyBigInteger x) {
         //StringBuilder resultString = new StringBuilder();
         MyBigInteger result = new MyBigInteger();
         char[] resultString, padding;
-        int carryOver, digitResult, operandDigit, resultDigit, digitsAdded, idx;
+        int carryOver, digitResult, operandDigit, digitsAdded, idx;
         carryOver = 0;
 
         //If both numbers are negative
         if(x.Value.charAt(0) == '-' && this.Value.charAt(0) == '-'){
-            x.Value = x.Value.substring(1, x.Value.length()-1);
-            this.Value = this.Value.substring(1, this.Value.length()-1);
+            x.Value = x.Value.substring(1);
+            this.Value = this.Value.substring(1);
             result = this.MyBigIntegerPlus(x);
             result.Value = '-' + result.Value;
         //If 'this' is negative
         } else if(this.Value.charAt(0) == '-'){
-            this.Value = Value.substring(1, this.Value.length()-1);
+            this.Value = this.Value.substring(1);
             result = x.MyBigIntegerMinus(this);
         } else if(x.Value.charAt(0) == '-'){
-            x.Value = Value.substring(1, x.Value.length() -1);
+            x.Value = x.Value.substring(1);
             result = this.MyBigIntegerMinus(x);
         } else {
             //If 'x' is longer than 'this'
@@ -71,8 +82,7 @@ public class MyBigInteger {
                 operandDigit = this.Value.length() - 1;
                 digitsAdded = 0;
             }
-            resultString = new char[operandDigit + 1];
-            resultDigit = operandDigit;
+            resultString = new char[operandDigit + 2];
 
             //Process both arrays
             for(idx = operandDigit; idx >= 0; idx--) {
@@ -87,9 +97,16 @@ public class MyBigInteger {
                     digitResult = digitResult - 10;
                 }
                 //Append result to our result string
-                resultString[idx] = convertToChar(digitResult);
+                resultString[idx+1] = convertToChar(digitResult);
             }
-            result.Value = String.valueOf(resultString);
+            if(carryOver == 1){
+                resultString[0] = '1';
+                result.Value = formatString(resultString);
+            } else {
+                resultString[0] = '0';
+                //result.Value = resultString.toString().substring(findLeadingZeros(resultString));
+                result.Value = formatString(resultString);
+            }
         }
         return result;
     }
@@ -100,20 +117,22 @@ public class MyBigInteger {
         //Records whether 'result' is negative
         boolean resultIsNegative = false;
         char[] resultString, padding, negativeValue;
-        int carryOver, digitResult, operandDigit, resultDigit, digitsToAdd, idx;
+        int carryOver, digitResult, operandDigit, resultDigit,idx;
+        int thisDigitsToAdd = 0;
+        int xDigitsToAdd = 0;
         long negativeResult = 0;
-        Boolean isNegative = true;
         carryOver = 0;
 
         //Determine whether the numbers are negative or positive
         //If both numbers are negative
         if(this.Value.charAt(0) == '-' && x.Value.charAt(0) == '-'){
             //Remove negative sign from x
-            x.Value = x.Value.substring(1, x.Value.length()-1);
+            x.Value = x.Value.substring(1);
             //Remove negative sign from 'this' because it will be subtracted
             //from x
-            this.Value = x.Value.substring(1, x.Value.length()-1);
+            this.Value = this.Value.substring(1);
             result = x.MyBigIntegerMinus(this);
+            result.Value = '-' + result.Value;
         //If 'this' is negative
         } else if(this.Value.charAt(0)== '-'){
             //Add values as negative
@@ -122,66 +141,79 @@ public class MyBigInteger {
         //If 'x' is negative
         } else if(x.Value.charAt(0) == '-'){
             //Add values as both positive
-            x.Value = x.Value.substring(1, x.Value.length()-1);
+            x.Value = x.Value.substring(1);
             result = this.MyBigIntegerPlus(x);
         } else {
 
             //If x.Value is longer than this.Value
             if (x.Value.length() > this.Value.length()) {
                 //Add padding to 'this' value
-                digitsToAdd = x.Value.length() - this.Value.length();
-                padding = new char[digitsToAdd];
-                for (idx = 0; idx < digitsToAdd; idx++) {
-                    padding[idx] = '0';
-                }
-                x.Value = String.valueOf(padding) + x.Value;
-                operandDigit = x.Value.length() - 1;
-            } else if(this.Value.length() > x.Value.length()){
-                digitsToAdd = this.Value.length() - x.Value.length();
-                padding = new char[digitsToAdd];
-                for (idx = 0; idx < digitsToAdd; idx++) {
+                thisDigitsToAdd = x.Value.length() - this.Value.length();
+                padding = new char[thisDigitsToAdd];
+                for (idx = 0; idx < thisDigitsToAdd; idx++) {
                     padding[idx] = '0';
                 }
                 this.Value = String.valueOf(padding) + this.Value;
+                operandDigit = x.Value.length() - 1;
+            } else if(this.Value.length() > x.Value.length()){
+                xDigitsToAdd = this.Value.length() - x.Value.length();
+                padding = new char[xDigitsToAdd];
+                for (idx = 0; idx < xDigitsToAdd; idx++) {
+                    padding[idx] = '0';
+                }
+                x.Value = String.valueOf(padding) + x.Value;
                 operandDigit = this.Value.length() - 1;
             } else {
                 operandDigit = this.Value.length() - 1;
-                digitsToAdd = 0;
             }
 
-            resultString = new char[operandDigit + 2];
-            negativeValue = new char[operandDigit + 2];
-            resultDigit = operandDigit + 1;
+            resultString = new char[operandDigit + 1];
+            negativeValue = new char[operandDigit + 1];
+            resultDigit = operandDigit;
+
+            for(idx = 0; idx < operandDigit+1; idx++){
+                negativeValue[idx] = '0';
+                resultString[idx] = '0';
+            }
 
             //Loop through both arrays
             for (idx = operandDigit; idx >= 0; idx--) {
                 digitResult = convertToInt(this.Value.charAt(idx)) - convertToInt(x.Value.charAt(idx)) - carryOver;
                 carryOver = 0;
-                //If we end up with a negative number and we are down to the 0s we added
-                if (digitResult < 0 && idx >= digitsToAdd) {
-                    negativeValue[idx + 1] = convertToChar(digitResult);
+                if(digitResult < 0 && idx == 0) {
+                    negativeValue[idx] = convertToChar(digitResult*-1);
+                    resultIsNegative = true;
+                    //If we end up with a negative number and we are down to the 0s we added
+                } else if (digitResult < 0 && idx < thisDigitsToAdd) {
+                    negativeValue[idx] = convertToChar(digitResult * -1);
                     resultIsNegative = true;
                     //If there isn't a digit to carry
                 } else if (digitResult < 0) {
                     carryOver = 1;
                     digitResult = digitResult + 10;
-                    digitResult = convertToInt(x.Value.charAt(idx)) - convertToInt(this.Value.charAt(idx));
-                    resultString[idx + 1] = convertToChar(digitResult);
+                    resultString[idx] = convertToChar(digitResult);
                 } else {
-                    resultString[idx + 1] = convertToChar(digitResult);
+                    resultString[idx] = convertToChar(digitResult);
                 }
             }
 
             //If the number is negative, add a negative sign to the beginning
-            if (isNegative) {
-                resultString[0] = '-';
+            if (resultIsNegative) {
                 //Subtract result from negative result to get result
-                for (idx = resultDigit; idx > 0; idx--) {
-                    resultString[idx] = convertToChar(convertToInt(negativeValue[idx]) - convertToInt(resultString[idx]));
+                carryOver = 0;
+                for (idx = resultDigit; idx >= 0; idx--) {
+                    digitResult = convertToInt(negativeValue[idx]) - convertToInt(resultString[idx]) - carryOver;
+                    carryOver = 0;
+                    if(digitResult < 0){
+                        digitResult = digitResult + 10;
+                        carryOver = 1;
+                    }
+                   resultString[idx] = convertToChar(digitResult);
                 }
-                result.Value = String.valueOf(resultString);
+                result.Value = '-' + formatString(resultString);
+                //result.Value = '-' + String.valueOf(resultString).substring(formatString(resultString));
             } else {
-                result.Value = String.valueOf(resultString).substring(1, resultDigit);
+                result.Value = formatString(resultString);
             }
         }
         return result;

@@ -16,11 +16,13 @@ public class MyBigIntegerTest {
         for(int x = 0; x < 10; x++){
             a = rand.nextLong();
             b = rand.nextLong() % (Long.MAX_VALUE - a);
-            myBigIntegerOne.Value = String.valueOf(a);
-            myBigIntegerTwo.Value = String.valueOf(b);
+            myBigIntegerOne.Value = Long.toString(a);
+            myBigIntegerTwo.Value = Long.toString(b);
             myBigResult = myBigIntegerOne.MyBigIntegerPlus(myBigIntegerTwo);
             result = String.valueOf(a+b);
-            Assert.assertSame(a+b, Long.parseLong(myBigResult.Value));
+            //System.out.printf("%d \n", Long.parseLong(myBigResult.Value));
+            //System.out.printf("%d \n", a+b);
+            Assert.assertEquals(String.valueOf(a+b), myBigResult.Value);
         }
     }
 
