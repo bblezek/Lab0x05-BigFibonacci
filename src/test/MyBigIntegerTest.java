@@ -6,23 +6,36 @@ import java.util.Random;
 
 public class MyBigIntegerTest {
     @Test
-    public void testPlus() throws Exception {
+    public void testPlus() {
         MyBigInteger myBigIntegerOne = new MyBigInteger();
         MyBigInteger myBigIntegerTwo = new MyBigInteger();
-        MyBigInteger myBigResult = new MyBigInteger();
+        MyBigInteger myBigResult;
         long a, b;
-        String result;
         Random rand = new Random();
         for(int x = 0; x < 10; x++){
             a = rand.nextLong();
             b = rand.nextLong() % (Long.MAX_VALUE - a);
-            myBigIntegerOne.Value = Long.toString(a);
-            myBigIntegerTwo.Value = Long.toString(b);
+            myBigIntegerOne.setValue(Long.toString(a));;
+            myBigIntegerTwo.setValue(Long.toString(b));
             myBigResult = myBigIntegerOne.MyBigIntegerPlus(myBigIntegerTwo);
-            result = String.valueOf(a+b);
-            //System.out.printf("%d \n", Long.parseLong(myBigResult.Value));
-            //System.out.printf("%d \n", a+b);
-            Assert.assertEquals(String.valueOf(a+b), myBigResult.Value);
+            Assert.assertEquals(String.valueOf(a+b), myBigResult.Value());
+        }
+    }
+
+    @Test
+    public void testMinus(){
+        MyBigInteger myBigIntegerOne = new MyBigInteger();
+        MyBigInteger myBigIntegerTwo = new MyBigInteger();
+        MyBigInteger myBigResult;
+        long a, b;
+        Random rand = new Random();
+        for(int x = 0; x < 10; x++){
+            a = rand.nextLong();
+            b = rand.nextLong() % (Long.MAX_VALUE - a);
+            myBigIntegerOne.setValue(Long.toString(a));
+            myBigIntegerTwo.setValue(Long.toString(b));
+            myBigResult = myBigIntegerOne.MyBigIntegerMinus(myBigIntegerTwo);
+            Assert.assertEquals(String.valueOf(a-b), myBigResult.Value());
         }
     }
 

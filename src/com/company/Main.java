@@ -11,12 +11,12 @@ public class Main {
         MyBigInteger a = new MyBigInteger(A);
         String B = "51474836480";
         MyBigInteger b = new MyBigInteger(B);
-        System.out.printf("Original string is %s \n", a.ToString());
-        System.out.printf("B string is %s \n", b.ToString());
+        System.out.printf("Original string is %s \n", a.toString());
+        System.out.printf("B string is %s \n", b.toString());
         long result;
         result = 2147483648089L + 51474836480L;
         MyBigInteger resultBigInt = a.MyBigIntegerPlus(b);
-        System.out.printf("Result is %s \n", resultBigInt.ToString());
+        System.out.printf("Result is %s \n", resultBigInt.toString());
         System.out.printf("Result should be %d \n", result);
     }
 }
