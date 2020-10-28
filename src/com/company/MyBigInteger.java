@@ -242,8 +242,71 @@ public class MyBigInteger {
         return result;
     }
 
-    public MyBigInteger MyBigIntegersTimes(){
+    public MyBigInteger MyBigIntegerTimes(MyBigInteger x){
         MyBigInteger result = new MyBigInteger();
+        int xDigit, thisDigit, totalXDigits, totalThisDigits, totalDigits, carryOver, digitResult, xMul;
+        int[][] results;
+        char[] totalResult;
+        totalThisDigits = this.Value.length();
+        totalXDigits = x.Value.length();
+        totalDigits = totalThisDigits + totalXDigits;
+        carryOver = 0;
+
+        results = new int[totalXDigits][totalDigits];
+        totalResult = new char[totalDigits];
+
+        int r, c;
+        //Filling result array with 0s
+        for(r = 0; r < totalXDigits; r++){
+            for(c = 0; c < totalThisDigits; c++){
+                results[r][c] = 0;
+            }
+        }
+
+        //Take lowest xDigit and work up
+        for(xDigit = totalXDigits-1; xDigit >= 0; xDigit--){
+            xMul = convertToInt(x.Value.charAt(xDigit));
+            //Multiply by each digit of this.Value
+            for(thisDigit = totalThisDigits-1; thisDigit >= 0; thisDigit--){
+                digitResult = xMul * convertToInt(this.Value.charAt(thisDigit)) + carryOver;
+                carryOver = 0;
+                //Figuring out how much to carry to next digit
+                if(digitResult >= 10){
+                    carryOver = digitResult / 10;
+                    digitResult = digitResult % 10;
+                }
+                results[xDigit][thisDigit + xDigit + 1] = digitResult;
+            }
+            if(carryOver > 0){
+                results[xDigit][xDigit] = carryOver;
+                carryOver = 0;
+            }
+        }
+
+        int totalIdx = totalDigits -1;
+        carryOver = 0;
+        //Calculating totals for each digit place
+        for(c = totalDigits-1; c >= 0; c--){
+            digitResult = carryOver;
+            for(r = totalXDigits-1; r >= 0; r--){
+                digitResult += results[r][c];
+                carryOver = 0;
+            }
+            if(digitResult >= 10) {
+                carryOver = digitResult / 10;
+                digitResult = digitResult % 10;
+            }
+            totalResult[totalIdx] = convertToChar(digitResult);
+            totalIdx--;
+        }
+        result.Value = formatString(totalResult);
+
+        if(this.isNegative && !x.isNegative){
+            result.isNegative = true;
+        } else if(!this.isNegative && x.isNegative){
+            result.isNegative = true;
+        }
+
         return result;
     }
 
@@ -254,4 +317,11 @@ public class MyBigInteger {
         return Value;
     }
 
+    public String AbbreviatedValue(){
+        int length = Value.length();
+        if(isNegative){
+            return '-' + Value.substring(0, 4) + "..." + Value.substring(length-5, length);
+        }
+        return Value.substring(0, 4) + "..." + Value.substring(length-5, length);
+    }
 }

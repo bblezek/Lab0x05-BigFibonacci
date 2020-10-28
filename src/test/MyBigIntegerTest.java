@@ -39,4 +39,21 @@ public class MyBigIntegerTest {
         }
     }
 
+    @Test
+    public void testTimes(){
+        MyBigInteger myBigIntegerOne = new MyBigInteger();
+        MyBigInteger myBigIntegerTwo = new MyBigInteger();
+        MyBigInteger myBigResult;
+        long a, b;
+        Random rand = new Random();
+        for(int x = 0; x < 10; x++){
+            a = rand.nextInt();
+            b = rand.nextInt();
+            myBigIntegerOne.setValue(Long.toString(a));
+            myBigIntegerTwo.setValue(Long.toString(b));
+            myBigResult = myBigIntegerOne.MyBigIntegerTimes(myBigIntegerTwo);
+            Assert.assertEquals(String.valueOf(a*b), myBigResult.Value());
+        }
+    }
+
 }
