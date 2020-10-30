@@ -6,15 +6,15 @@ public class MyBigInteger {
     private String Value;
     private Boolean isNegative;
 
-    public MyBigInteger(){
+    public MyBigInteger() {
         Value = new String();
         isNegative = false;
     }
 
     //Constructor that takes a string
-    public MyBigInteger(String stringValue){
+    public MyBigInteger(String stringValue) {
         Value = stringValue;
-        if(stringValue.charAt(0) == '-'){
+        if (stringValue.charAt(0) == '-') {
             isNegative = true;
             Value = Value.substring(1);
         } else {
@@ -22,8 +22,10 @@ public class MyBigInteger {
         }
     }
 
+    //Sets 'Value' for MyBigInteger
+    //Checks for negative numbers and initializes Value and isNegative appropriately
     public void setValue(String string) {
-        if(string.charAt(0) == '-'){
+        if (string.charAt(0) == '-') {
             isNegative = true;
             Value = string.substring(1);
         } else {
@@ -33,97 +35,62 @@ public class MyBigInteger {
     }
 
     //Takes a character and converts it to an int
-    private int convertToInt(char c){
+    private int convertToInt(char c) {
         return c - 48;
     }
 
     //Takes an integer and returns the equivalent character
-    private char convertToChar(int i){
-        return (char) (i+48);
+    private char convertToChar(int i) {
+        return (char) (i + 48);
+    }
+
+    //Add leading zeros to array
+    private String addZeros(String str, int numToAdd) {
+        char[] padding = new char[numToAdd];
+        int idx;
+        for (idx = 0; idx < numToAdd; idx++) {
+            padding[idx] = '0';
+        }
+        return String.valueOf(padding) + str;
     }
 
     //Removes leading zeros from array of numbers
-    private static String formatString(char[] array){
+    private static String removeLeadingZeros(char[] array) {
         int leadingZeros = 0;
-        for(leadingZeros = 0; leadingZeros < array.length; leadingZeros++){
-            if(array[leadingZeros] != '0'){
+        for (leadingZeros = 0; leadingZeros < array.length - 1; leadingZeros++) {
+            if (array[leadingZeros] != '0') {
                 break;
             }
         }
         return String.valueOf(array).substring(leadingZeros);
     }
 
+    //Removes leading zeros from string
+    private static String removeLeadingZeros(String str) {
+        int leadingZeros = 0;
+        for (leadingZeros = 0; leadingZeros < str.length() - 1; leadingZeros++) {
+            if (str.charAt(leadingZeros) != '0') {
+                break;
+            }
+        }
+        return str.substring(leadingZeros);
+    }
+
     //Adds two large integers
     public MyBigInteger MyBigIntegerPlus(MyBigInteger x) {
         //Stores result
         MyBigInteger result = new MyBigInteger();
-        char[] resultString, padding;
-        int carryOver, digitResult, operandDigit, digitsAdded, idx;
-        carryOver = 0;
-
         //If 'this' is negative, subtract this from x
-        if(this.isNegative && !x.isNegative){
+        if (this.isNegative && !x.isNegative) {
             this.isNegative = false;
             result = x.MyBigIntegerMinus(this);
-        //If 'x' is negative, subtract x from this
-        } else if(x.isNegative && !this.isNegative){
+            //If 'x' is negative, subtract x from this
+        } else if (x.isNegative && !this.isNegative) {
             x.isNegative = false;
             result = this.MyBigIntegerMinus(x);
         } else {
-            //If 'x' is longer than 'this'
-            if (x.Value.length() > this.Value.length()) {
-                //Add 0s to 'this'
-                operandDigit = x.Value.length() - 1;
-                digitsAdded = x.Value.length() - this.Value.length();
-                padding = new char[digitsAdded];
-                for(idx = 0; idx < digitsAdded; idx++){
-                    padding[idx] = '0';
-                }
-                this.Value = String.valueOf(padding) + this.Value;
-            //If 'this' is longer than 'x'
-            } else if(this.Value.length() > x.Value.length()){
-                //Adding leading 0s to 'x'
-                operandDigit = this.Value.length() - 1;
-                digitsAdded = this.Value.length() - x.Value.length();
-                padding = new char[digitsAdded];
-                for(idx = 0; idx < digitsAdded; idx++){
-                    padding[idx] = '0';
-                }
-                x.Value = String.valueOf(padding) + x.Value;
-            //Otherwise, just set the number of digit operands
-            } else {
-                operandDigit = this.Value.length() - 1;
-                digitsAdded = 0;
-            }
-            resultString = new char[operandDigit + 2];
-
-            //Process both arrays
-            for(idx = operandDigit; idx >= 0; idx--) {
-                //Add
-                digitResult = convertToInt(x.Value.charAt(idx)) + convertToInt(this.Value.charAt(idx)) + carryOver;
-                //Set overflow or "carry over" back to 0
-                carryOver = 0;
-                //Decide whether we have "overflow" in this digit
-                if (digitResult >= 10) {
-                    //If so, calculate overflow and current digit
-                    carryOver = 1;
-                    digitResult = digitResult - 10;
-                }
-                //Append result to our result string
-                resultString[idx+1] = convertToChar(digitResult);
-            }
-            //If we end up with a last digit of carryover
-            if(carryOver == 1){
-                //Put a '1' in the highest digit
-                resultString[0] = '1';
-                result.Value = formatString(resultString);
-            //Otherwise just set it to 0
-                //which will then be removed when we call formatString
-            } else {
-                resultString[0] = '0';
-                result.Value = formatString(resultString);
-            }
-            if(this.isNegative && x.isNegative){
+            result.Value = StringAdd(this.Value, x.Value);
+            if (this.isNegative && x.isNegative) {
                 result.isNegative = true;
             }
         }
@@ -131,197 +98,319 @@ public class MyBigInteger {
     }
 
     //Subtracts x from 'this'
-    public MyBigInteger MyBigIntegerMinus(MyBigInteger x){
+    public MyBigInteger MyBigIntegerMinus(MyBigInteger x) {
         MyBigInteger result = new MyBigInteger();
-        char[] resultString, padding, negativeValue;
-        int carryOver, digitResult, operandDigit, idx;
-        int thisDigitsToAdd = 0;
-        int xDigitsToAdd = 0;
-        carryOver = 0;
 
+        //Depending on the sign, calls StringMinus or StringAdd
         //Determine whether the numbers are negative or positive
-        //If both numbers are negative
-        if(this.isNegative && x.isNegative){
-            x.isNegative = false;
-            this.isNegative = false;
-            result = x.MyBigIntegerMinus(this);
-            x.isNegative = true;
-            this.isNegative = false;
-        //If 'this' is negative
-        } else if(this.isNegative){
+        if (x.isNegative && this.isNegative) {
+            result.Value = StringMinus(x.Value, this.Value);
+            //If 'this' is negative
+        } else if (this.isNegative) {
             //Add values as negative
-            x.isNegative = true;
-            result = this.MyBigIntegerPlus(x);
-            x.isNegative = false;
-        //If 'x' is negative
-        } else if(x.isNegative){
+            result.Value = StringAdd(this.Value, x.Value);
+            result.isNegative = true;
+            //If 'x' is negative
+        } else if (x.isNegative) {
             //Add values as both positive
-            x.isNegative = false;
-            result = this.MyBigIntegerPlus(x);
-            x.isNegative = true;
-        //If we have two positive values
+            result.Value = StringAdd(this.Value, x.Value);
+            //If we have two positive values
         } else {
-            //If x.Value is longer than this.Value
-            if (x.Value.length() > this.Value.length()) {
-                //Add padding to 'this' value
-                thisDigitsToAdd = x.Value.length() - this.Value.length();
-                padding = new char[thisDigitsToAdd];
-                for (idx = 0; idx < thisDigitsToAdd; idx++) {
-                    padding[idx] = '0';
-                }
-                //Set number of digits in operand equal to x.Value
-                this.Value = String.valueOf(padding) + this.Value;
-                operandDigit = x.Value.length() - 1;
-            //If this.Value is longer than x.value
-            } else if(this.Value.length() > x.Value.length()){
-                //Add padding
-                xDigitsToAdd = this.Value.length() - x.Value.length();
-                padding = new char[xDigitsToAdd];
-                for (idx = 0; idx < xDigitsToAdd; idx++) {
-                    padding[idx] = '0';
-                }
-                //Set number of digits in operand equal to this.Value
-                x.Value = String.valueOf(padding) + x.Value;
-                operandDigit = this.Value.length() - 1;
-            //If they are the same length
-            } else {
-                operandDigit = this.Value.length() - 1;
-            }
-
-            resultString = new char[operandDigit + 1];
-            negativeValue = new char[operandDigit + 1];
-
-            //Filling result and negative arrays with 0s
-            for(idx = 0; idx < operandDigit+1; idx++){
-                negativeValue[idx] = '0';
-                resultString[idx] = '0';
-            }
-
-            //Loop through both arrays
-            for (idx = operandDigit; idx >= 0; idx--) {
-                digitResult = convertToInt(this.Value.charAt(idx)) - convertToInt(x.Value.charAt(idx)) - carryOver;
-                carryOver = 0;
-                //If we are down to our last element and the number becomes negative
-                if(digitResult < 0 && idx == 0) {
-                    negativeValue[idx] = convertToChar(digitResult*-1);
-                    result.isNegative = true;
-                    //If we end up with a negative number and we are down to the 0s we added
-                } else if (digitResult < 0 && idx < thisDigitsToAdd) {
-                    //Create a negative value array
-                    negativeValue[idx] = convertToChar(digitResult * -1);
-                    result.isNegative = true;
-                    //If there is a digit to carry
-                } else if (digitResult < 0) {
-                    carryOver = 1;
-                    digitResult = digitResult + 10;
-                    resultString[idx] = convertToChar(digitResult);
-                } else {
-                    resultString[idx] = convertToChar(digitResult);
-                }
-            }
-
-            //If the number is negative
-            if (result.isNegative) {
-                //Subtract result from negative result to get result
-                carryOver = 0;
-                for (idx = operandDigit; idx >= 0; idx--) {
-                    digitResult = convertToInt(negativeValue[idx]) - convertToInt(resultString[idx]) - carryOver;
-                    carryOver = 0;
-                    if(digitResult < 0){
-                        digitResult = digitResult + 10;
-                        carryOver = 1;
-                    }
-                   resultString[idx] = convertToChar(digitResult);
-                }
-                result.Value = formatString(resultString);
-            //If the number is positive
-            } else {
-                result.Value = formatString(resultString);
-            }
+            result.Value = StringMinus(this.Value, x.Value);
+        }
+        if (result.Value.charAt(0) == '-') {
+            result.Value = result.Value.substring(1);
+            result.isNegative = !result.isNegative;
         }
         return result;
     }
 
-    public MyBigInteger MyBigIntegerTimes(MyBigInteger x){
+    //Slower 'MyBigInteger' multiplication
+    public MyBigInteger MyBigIntegerTimes(MyBigInteger x) {
         MyBigInteger result = new MyBigInteger();
-        int xDigit, thisDigit, totalXDigits, totalThisDigits, totalDigits, carryOver, digitResult, xMul;
+        //Calls 'grade-school' multiplication algorithm on this.Value and x.Value
+        result.Value = removeLeadingZeros(StringTimes(this.Value, x.Value));
+
+        //Checking to see if the result should be 0
+        if (this.isNegative && !x.isNegative) {
+            result.isNegative = true;
+        } else if (!this.isNegative && x.isNegative) {
+            result.isNegative = true;
+        }
+
+        return result;
+    }
+
+    //Adds two strings
+    private String StringAdd(String a, String b) {
+        //Padding strings as necessary
+        if (a.length() > b.length()) {
+            b = addZeros(b, a.length() - b.length());
+        } else if (b.length() > a.length()) {
+            a = addZeros(a, b.length() - a.length());
+        }
+
+        char[] result = new char[a.length() + 1];
+        int carryOver = 0;
+        int digitResult = 0;
+        //Looping through both arrays and adding
+        for (int idx = a.length() - 1; idx >= 0; idx--) {
+            digitResult = convertToInt(a.charAt(idx)) + convertToInt(b.charAt(idx)) + carryOver;
+            carryOver = 0;
+            //If result 'overflows' digit
+            if (digitResult >= 10) {
+                carryOver = 1;
+                digitResult = digitResult % 10;
+            }
+            result[idx + 1] = convertToChar(digitResult);
+        }
+        //If we have an 'extra' 1, put in first digit
+        if (carryOver == 1) {
+            result[0] = '1';
+        } else {
+            return String.valueOf(result).substring(1);
+        }
+        return String.valueOf(result);
+    }
+
+    //Subtract one string from another
+    private String StringMinus(String A, String B) {
+        //If there is nothing in A
+        if (A.length() == 0 && !B.equals("0")) {
+            return "-" + B;
+        //If there is nothing in A and B is 0, return 0
+        } else if (A.length() == 0 && B.equals("0")) {
+            return B;
+        //If A and B are equal
+        } else if (A.equals(B)) {
+            return "0";
+        //If B has nothing in it
+        } else if (B.length() == 0) {
+            return A;
+        //Pad A or B as necessary
+        } else if (A.length() > B.length()) {
+            B = addZeros(B, A.length() - B.length());
+        } else if (B.length() > A.length()) {
+            A = addZeros(A, B.length() - A.length());
+            return "-" + StringMinus(B, A);
+        }
+
+        int idx, digitResult, carryOver;
+        //Stores result
+        char[] result = new char[A.length()];
+        //Stores negative number if B 'overflows' A
+        char[] negative = new char[A.length()];
+        for (idx = 0; idx < A.length(); idx++) {
+            result[idx] = '0';
+            negative[idx] = '0';
+        }
+
+        carryOver = 0;
+        //Loop through both arrays
+        for (idx = A.length() - 1; idx >= 0; idx--) {
+            digitResult = convertToInt(A.charAt(idx)) - convertToInt(B.charAt(idx)) - carryOver;
+            carryOver = 0;
+            //If we are down to our last element and the number becomes negative
+            if (digitResult < 0 && idx == 0) {
+                negative[idx] = convertToChar(digitResult * -1);
+                return "-" + StringMinus(String.valueOf(negative), String.valueOf(result));
+                //If there is a digit to carry
+            } else if (digitResult < 0) {
+                carryOver = 1;
+                digitResult = digitResult + 10;
+                result[idx] = convertToChar(digitResult);
+            } else {
+                result[idx] = convertToChar(digitResult);
+            }
+        }
+        return removeLeadingZeros(result);
+    }
+
+    //Multiplies two strings the grade-school or "slow" way
+    private String StringTimes(String A, String B) {
+        int aDigit, bDigit, totalADigits, totalBDigits, totalDigits, carryOver, digitResult, bMul;
         int[][] results;
         char[] totalResult;
-        totalThisDigits = this.Value.length();
-        totalXDigits = x.Value.length();
-        totalDigits = totalThisDigits + totalXDigits;
+        totalADigits = A.length();
+        totalBDigits = B.length();
+        totalDigits = totalADigits + totalBDigits;
         carryOver = 0;
 
-        results = new int[totalXDigits][totalDigits];
+        //Holds result from each iteration
+        results = new int[totalBDigits][totalDigits];
+        //Holds final result
         totalResult = new char[totalDigits];
 
         int r, c;
         //Filling result array with 0s
-        for(r = 0; r < totalXDigits; r++){
-            for(c = 0; c < totalThisDigits; c++){
+        for (r = 0; r < totalBDigits; r++) {
+            for (c = 0; c < totalADigits; c++) {
                 results[r][c] = 0;
             }
         }
 
-        //Take lowest xDigit and work up
-        for(xDigit = totalXDigits-1; xDigit >= 0; xDigit--){
-            xMul = convertToInt(x.Value.charAt(xDigit));
-            //Multiply by each digit of this.Value
-            for(thisDigit = totalThisDigits-1; thisDigit >= 0; thisDigit--){
-                digitResult = xMul * convertToInt(this.Value.charAt(thisDigit)) + carryOver;
+        //Take lowest bDigit and work up
+        for (bDigit = totalBDigits - 1; bDigit >= 0; bDigit--) {
+            bMul = convertToInt(B.charAt(bDigit));
+            //Multiply by each digit of A
+            for (aDigit = totalADigits - 1; aDigit >= 0; aDigit--) {
+                digitResult = bMul * convertToInt(A.charAt(aDigit)) + carryOver;
                 carryOver = 0;
                 //Figuring out how much to carry to next digit
-                if(digitResult >= 10){
+                if (digitResult >= 10) {
                     carryOver = digitResult / 10;
                     digitResult = digitResult % 10;
                 }
-                results[xDigit][thisDigit + xDigit + 1] = digitResult;
+                //Adding result to results array
+                results[bDigit][aDigit + bDigit + 1] = digitResult;
             }
-            if(carryOver > 0){
-                results[xDigit][xDigit] = carryOver;
+            //Adding any overflow from the final multiplication to the appropriate high digit spot in 'results'
+            if (carryOver > 0) {
+                results[bDigit][bDigit] = carryOver;
                 carryOver = 0;
             }
         }
 
-        int totalIdx = totalDigits -1;
+        int totalIdx = totalDigits - 1;
         carryOver = 0;
         //Calculating totals for each digit place
-        for(c = totalDigits-1; c >= 0; c--){
+        for (c = totalDigits - 1; c >= 0; c--) {
             digitResult = carryOver;
-            for(r = totalXDigits-1; r >= 0; r--){
+            for (r = totalBDigits - 1; r >= 0; r--) {
                 digitResult += results[r][c];
                 carryOver = 0;
             }
-            if(digitResult >= 10) {
+            if (digitResult >= 10) {
                 carryOver = digitResult / 10;
                 digitResult = digitResult % 10;
             }
             totalResult[totalIdx] = convertToChar(digitResult);
             totalIdx--;
         }
-        result.Value = formatString(totalResult);
+        return String.valueOf(totalResult);
+    }
 
-        if(this.isNegative && !x.isNegative){
-            result.isNegative = true;
-        } else if(!this.isNegative && x.isNegative){
-            result.isNegative = true;
+    //Multiplies two strings recursively
+    private String FasterTimesHelper(String A, String B) {
+        A = removeLeadingZeros(A);
+        B = removeLeadingZeros(B);
+
+        int returnVal;
+        //If A and B are single digit numbers
+        if (A.length() == 1 && B.length() == 1) {
+            returnVal = convertToInt(A.charAt(0)) * convertToInt(B.charAt(0));
+            return String.valueOf(returnVal);
+        }
+
+        //Checking to make sure A and B are same length
+        //If not, pad with zeros
+        int halfDigits;
+        if (A.length() > B.length()) {
+            B = addZeros(B, A.length() - B.length());
+        } else if (B.length() > A.length()) {
+            A = addZeros(A, B.length() - A.length());
+        }
+
+        //If A and B are not divisible by 2, add a leading zero to each
+        if (A.length() % 2 != 0) {
+            A = "0" + A;
+            B = "0" + B;
+        }
+
+        halfDigits = A.length() / 2;
+
+        //Splitting strings into low and high
+        String lowA, lowB, highA, highB;
+        highA = A.substring(0, halfDigits);
+        highB = B.substring(0, halfDigits);
+        lowA = A.substring(halfDigits);
+        lowB = B.substring(halfDigits);
+
+        String highMul, lowMul, addA, addB, middleDigits;
+        //Getting high digits of final result
+        highMul = FasterTimesHelper(highA, highB);
+        //Getting low digits of final result
+        lowMul = FasterTimesHelper(lowA, lowB);
+        addA = StringAdd(lowA, highA);
+        addB = StringAdd(lowB, highB);
+        //Getting "middle" digits - what will go in 10^halfDigit..10^fullDigit
+        middleDigits = FasterTimesHelper(addA, addB);
+        //StringMinus doesn't work with leading zeros
+        middleDigits = StringMinus(middleDigits, removeLeadingZeros(highMul));
+        middleDigits = StringMinus(middleDigits, removeLeadingZeros(lowMul));
+
+        String result, partialResult;
+        String carryOver = "";
+        //Add lower digits to final result
+        //If we have more digits in 'lower digits' than we have room for
+        if (lowMul.length() > halfDigits) {
+            carryOver = lowMul.substring(0, lowMul.length() - halfDigits);
+            result = lowMul.substring(lowMul.length() - halfDigits);
+            //If there are less digits in 'lower digits' than there are supposed to be
+        } else if (lowMul.length() < halfDigits) {
+            //pad with zeros
+            lowMul = addZeros(lowMul, halfDigits - lowMul.length());
+            result = lowMul;
+        } else {
+            result = lowMul;
+        }
+
+        //Add 'middle digits' to final result
+        //Adding 'extra' lower digits to 'middle digits'
+        partialResult = StringAdd(middleDigits, carryOver);
+        carryOver = "";
+        if (partialResult.length() > halfDigits) {
+            carryOver = partialResult.substring(0, partialResult.length() - halfDigits);
+            result = partialResult.substring(partialResult.length() - halfDigits) + result;
+        //Adding extra digits to 'middle digits' if we don't have enough
+        } else if (partialResult.length() < halfDigits) {
+            partialResult = addZeros(partialResult, halfDigits - partialResult.length());
+            result = partialResult + result;
+        } else {
+            result = partialResult + result;
+        }
+
+        //Adding high digits to result
+        //Adding 'extra' middle digits to 'high digits'
+        if (!carryOver.equals("")) {
+            partialResult = StringAdd(highMul, carryOver);
+            result = partialResult + result;
+        } else {
+            result = highMul + result;
         }
 
         return result;
     }
 
-    public String Value(){
-        if(isNegative) {
+    //Simply calls FasterTimesHelper recursive function on this.Value and x.Value
+    public MyBigInteger MyBigIntegerFasterTimes(MyBigInteger x) {
+
+        String resultString = FasterTimesHelper(this.Value, x.Value);
+        //Remove leading zeros from result
+        MyBigInteger result = new MyBigInteger(removeLeadingZeros(resultString));
+        //Checking if the result should be negative
+        if (this.isNegative && !x.isNegative) {
+            result.isNegative = true;
+        } else if (!this.isNegative && x.isNegative) {
+            result.isNegative = true;
+        }
+        return result;
+    }
+
+    //Returns a string representation of Value
+    public String Value() {
+        if (isNegative) {
             return '-' + Value;
         }
         return Value;
     }
 
-    public String AbbreviatedValue(){
+    //Returns an abridged representation of "Value"
+    public String AbbreviatedValue() {
         int length = Value.length();
-        if(isNegative){
-            return '-' + Value.substring(0, 4) + "..." + Value.substring(length-5, length);
+        if (isNegative) {
+            return '-' + Value.substring(0, 4) + "..." + Value.substring(length - 5, length);
         }
-        return Value.substring(0, 4) + "..." + Value.substring(length-5, length);
+        return Value.substring(0, 4) + "..." + Value.substring(length - 5, length);
     }
 }
