@@ -10,14 +10,14 @@ import java.util.Random;
 public class BigFibonacciTest {
 
     @Test
-    public void fibMatrixBigTest(){
+    public void fibMatrixBigTest() {
         System.out.printf("Fibonacci big matrix test: \n");
         MyBigInteger a = new MyBigInteger();
         MyBigInteger result = new MyBigInteger();
         BigFibonacci bigFib = new BigFibonacci();
         Fibonacci fib = new Fibonacci();
         long smallResult;
-        for(int x = 0; x < 92; x++){
+        for (int x = 0; x < 92; x++) {
             a.setValue(String.valueOf(x));
             result = bigFib.fibMatrixBig(a);
             smallResult = fib.fibMatrix(x);
@@ -50,7 +50,7 @@ public class BigFibonacciTest {
     }
 
     @Test
-    public void fibLoopBigTest(){
+    public void fibLoopBigTest() {
         System.out.printf("Fibonacci big loop test: \n");
         MyBigInteger a = new MyBigInteger();
         MyBigInteger result = new MyBigInteger();
@@ -61,7 +61,7 @@ public class BigFibonacciTest {
         result = bigFib.fibLoopBig(a);
         smallResult = fib.fibMatrix(34);
         Assert.assertEquals(String.valueOf(smallResult), result.Value());
-        for(int x = 0; x < 92; x++){
+        for (int x = 0; x < 92; x++) {
             a.setValue(String.valueOf(x));
             result = bigFib.fibLoopBig(a);
             smallResult = fib.fibMatrix(x);

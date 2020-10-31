@@ -15,7 +15,7 @@ public class BigFibonacci {
             //we begin at the bottom and calculate up
             MyBigInteger i = new MyBigInteger();
             MyBigInteger one = new MyBigInteger("1");
-            for (i.setValue("2"); i.MyBigIntegerLessThanEqual(x); i=i.MyBigIntegerPlus(one)) {
+            for (i.setValue("2"); i.MyBigIntegerLessThanEqual(x); i = i.MyBigIntegerPlus(one)) {
                 next = A.MyBigIntegerPlus(B);
                 A.setValue(B.Value());
                 B.setValue(next.Value());
@@ -26,7 +26,7 @@ public class BigFibonacci {
 
     //Matrix multiplication function
     public static MyBigInteger[][] matrixMulBig(MyBigInteger[][] matrixOne, MyBigInteger[][] matrixTwo,
-                                        int oneRows, int oneCols, int twoRows, int twoCols) {
+                                                int oneRows, int oneCols, int twoRows, int twoCols) {
         //Creating a new matrix to store our results
         MyBigInteger[][] resultMatrix = new MyBigInteger[oneRows][twoCols];
         MyBigInteger result = new MyBigInteger();

@@ -178,16 +178,16 @@ public class MyBigInteger {
         //If there is nothing in A
         if (A.length() == 0 && !B.equals("0")) {
             return "-" + B;
-        //If there is nothing in A and B is 0, return 0
+            //If there is nothing in A and B is 0, return 0
         } else if (A.length() == 0 && B.equals("0")) {
             return B;
-        //If A and B are equal
+            //If A and B are equal
         } else if (A.equals(B)) {
             return "0";
-        //If B has nothing in it
+            //If B has nothing in it
         } else if (B.length() == 0) {
             return A;
-        //Pad A or B as necessary
+            //Pad A or B as necessary
         } else if (A.length() > B.length()) {
             B = addZeros(B, A.length() - B.length());
         } else if (B.length() > A.length()) {
@@ -362,7 +362,7 @@ public class MyBigInteger {
         if (partialResult.length() > halfDigits) {
             carryOver = partialResult.substring(0, partialResult.length() - halfDigits);
             result = partialResult.substring(partialResult.length() - halfDigits) + result;
-        //Adding extra digits to 'middle digits' if we don't have enough
+            //Adding extra digits to 'middle digits' if we don't have enough
         } else if (partialResult.length() < halfDigits) {
             partialResult = addZeros(partialResult, halfDigits - partialResult.length());
             result = partialResult + result;
@@ -397,32 +397,32 @@ public class MyBigInteger {
         return result;
     }
 
-    public Boolean MyBigIntegerLessThanEqual(MyBigInteger x){
-        if(this.Value().length() > x.Value().length()){
+    public Boolean MyBigIntegerLessThanEqual(MyBigInteger x) {
+        if (this.Value().length() > x.Value().length()) {
             return false;
-        } else if(x.Value().length() > this.Value.length()){
+        } else if (x.Value().length() > this.Value.length()) {
             return true;
         }
-        for(int digits = 0; digits < this.Value().length(); digits++) {
-            if(this.Value.charAt(digits) > x.Value().charAt(digits)){
+        for (int digits = 0; digits < this.Value().length(); digits++) {
+            if (this.Value.charAt(digits) > x.Value().charAt(digits)) {
                 return false;
-            } else if(x.Value.charAt(digits) > this.Value().charAt(digits)){
+            } else if (x.Value.charAt(digits) > this.Value().charAt(digits)) {
                 return true;
             }
         }
         return true;
     }
 
-    public Boolean MyBigIntegerGreaterThan(MyBigInteger x){
-        if(this.Value().length() > x.Value().length()){
+    public Boolean MyBigIntegerGreaterThan(MyBigInteger x) {
+        if (this.Value().length() > x.Value().length()) {
             return true;
-        } else if(x.Value().length() > this.Value.length()){
+        } else if (x.Value().length() > this.Value.length()) {
             return false;
         }
-        for(int digits = 0; digits < this.Value().length(); digits++) {
-            if(this.Value.charAt(digits) > x.Value().charAt(digits)){
+        for (int digits = 0; digits < this.Value().length(); digits++) {
+            if (this.Value.charAt(digits) > x.Value().charAt(digits)) {
                 return true;
-            } else if(x.Value.charAt(digits) > this.Value().charAt(digits)){
+            } else if (x.Value.charAt(digits) > this.Value().charAt(digits)) {
                 return false;
             }
         }
@@ -442,9 +442,9 @@ public class MyBigInteger {
         int length = Value.length();
         if (isNegative && Value.length() <= 12) {
             return '-' + Value;
-        } else if (isNegative){
-            return '-' + Value.substring(0, 4) + "..." + Value.substring(length - 5, length);
-        } else if(Value.length() <= 12){
+        } else if (isNegative) {
+            return '-' + Value.substring(0, 5) + "..." + Value.substring(length - 5, length);
+        } else if (Value.length() <= 12) {
             return Value;
         }
 
