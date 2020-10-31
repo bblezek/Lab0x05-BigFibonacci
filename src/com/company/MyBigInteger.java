@@ -389,9 +389,9 @@ public class MyBigInteger {
         //Remove leading zeros from result
         MyBigInteger result = new MyBigInteger(removeLeadingZeros(resultString));
         //Checking if the result should be negative
-        if (this.isNegative && !x.isNegative) {
+        if (this.isNegative && !x.isNegative && !result.Value.equals("0")) {
             result.isNegative = true;
-        } else if (!this.isNegative && x.isNegative) {
+        } else if (!this.isNegative && x.isNegative && !result.Value.equals("0")) {
             result.isNegative = true;
         }
         return result;
@@ -408,9 +408,14 @@ public class MyBigInteger {
     //Returns an abridged representation of "Value"
     public String AbbreviatedValue() {
         int length = Value.length();
-        if (isNegative) {
+        if (isNegative && Value.length() <= 12) {
+            return '-' + Value;
+        } else if (isNegative){
             return '-' + Value.substring(0, 4) + "..." + Value.substring(length - 5, length);
+        } else if(Value.length() <= 12){
+            return Value;
         }
+
         return Value.substring(0, 4) + "..." + Value.substring(length - 5, length);
     }
 }
