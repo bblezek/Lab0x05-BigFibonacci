@@ -7,5 +7,8 @@ public class Main {
 	// write your code here
         MyBigIntegerRuntime runTests = new MyBigIntegerRuntime();
         runTests.generateTable();
+
+        BigFibonacciTables generateFibTables = new BigFibonacciTables();
+        generateFibTables.generateTables();
     }
 }
