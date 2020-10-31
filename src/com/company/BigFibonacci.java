@@ -2,6 +2,28 @@ package com.company;
 
 public class BigFibonacci {
 
+    //Fibonacci function with loop
+    public static MyBigInteger fibLoopBig(MyBigInteger x) {
+        MyBigInteger A = new MyBigInteger("0");
+        MyBigInteger B = new MyBigInteger("1");
+        MyBigInteger next = new MyBigInteger();
+        //If we are looking for one of the first two elements in the sequence
+        if (x.Value().length() == 1 && Integer.parseInt(x.Value()) < 2) {
+            return x;
+        } else {
+            //If it is not one of the first few elements,
+            //we begin at the bottom and calculate up
+            MyBigInteger i = new MyBigInteger();
+            MyBigInteger one = new MyBigInteger("1");
+            for (i.setValue("2"); i.MyBigIntegerLessThanEqual(x); i=i.MyBigIntegerPlus(one)) {
+                next = A.MyBigIntegerPlus(B);
+                A.setValue(B.Value());
+                B.setValue(next.Value());
+            }
+        }
+        return B;
+    }
+
     //Matrix multiplication function
     public static MyBigInteger[][] matrixMulBig(MyBigInteger[][] matrixOne, MyBigInteger[][] matrixTwo,
                                         int oneRows, int oneCols, int twoRows, int twoCols) {

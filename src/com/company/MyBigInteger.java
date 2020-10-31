@@ -397,6 +397,38 @@ public class MyBigInteger {
         return result;
     }
 
+    public Boolean MyBigIntegerLessThanEqual(MyBigInteger x){
+        if(this.Value().length() > x.Value().length()){
+            return false;
+        } else if(x.Value().length() > this.Value.length()){
+            return true;
+        }
+        for(int digits = 0; digits < this.Value().length(); digits++) {
+            if(this.Value.charAt(digits) > x.Value().charAt(digits)){
+                return false;
+            } else if(x.Value.charAt(digits) > this.Value().charAt(digits)){
+                return true;
+            }
+        }
+        return true;
+    }
+
+    public Boolean MyBigIntegerGreaterThan(MyBigInteger x){
+        if(this.Value().length() > x.Value().length()){
+            return true;
+        } else if(x.Value().length() > this.Value.length()){
+            return false;
+        }
+        for(int digits = 0; digits < this.Value().length(); digits++) {
+            if(this.Value.charAt(digits) > x.Value().charAt(digits)){
+                return true;
+            } else if(x.Value.charAt(digits) > this.Value().charAt(digits)){
+                return false;
+            }
+        }
+        return false;
+    }
+
     //Returns a string representation of Value
     public String Value() {
         if (isNegative) {
