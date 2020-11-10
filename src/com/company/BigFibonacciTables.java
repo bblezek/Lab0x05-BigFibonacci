@@ -31,7 +31,7 @@ public class BigFibonacciTables {
         int X;
         String[] xValues = new String[10];
         
-        //Print first row of table
+        /*//Print first row of table
         System.out.printf("Fibonacci Big Integer Loop Table:\n");
         System.out.printf("%15s %15s %15s %15s %15s %15s %15s\n", "N (size)", "X (input value)", "fib(X)",
                 "Run Time", "10x Ratio:", "T_x-based", "T_n-based");
@@ -59,7 +59,8 @@ public class BigFibonacciTables {
                         curRunTime);
                 if (N > 1) {
                     //The complexity is quadratic, because for each iteration through the loop we have to
-                    //perform an addition which is also linear.  So our complexity as compared to X/10 will be
+                    //perform an addition which is also linear in proportion to X.
+                    // So our complexity as compared to X/10 will be
                     // X^2/ (X/10)^2 or X^2/(X^2/100) or 100
                     System.out.printf("%15.3f %15d %15.0f \n", (float) curRunTime / prevTime[X], 100,
                             Math.pow(10, 2 * N) / Math.pow(10, 2 * (N - 1)));
@@ -70,7 +71,7 @@ public class BigFibonacciTables {
                 xValues[X] = xValues[X] + "0";
             }
         }
-
+*/
         //Table for fibMatrixBig
         //Print first row of table
         System.out.printf("Fibonacci Big Integer Matrix Table:\n");
@@ -84,8 +85,8 @@ public class BigFibonacciTables {
             xValues[X] = String.valueOf(X);
         }
 
-        double NToLogThree, NMinusOneToLogThree;
-        long XVal;
+        long XVal, NVal;
+        result = new MyBigInteger();
         //N is the number of digits
         for (N = 1; N < max; N++) {
             if (curRunTime >= maxRunTime) {
@@ -93,28 +94,43 @@ public class BigFibonacciTables {
             }
             //X iterates through each value in the digit (1..9 + appropriate number of zeros)
             for (X = 1; X <= 9; X++) {
+
                 fibIdx.setValue(xValues[X]);
-                beforeTime = getCpuTime();
-                result = bigFib.fibMatrixBig(fibIdx);
-                afterTime = getCpuTime();
-                curRunTime = afterTime - beforeTime;
+                if(N <= 4){
+                    curRunTime = 0;
+                    for(int y = 0; y < 100; y++) {
+                        beforeTime = getCpuTime();
+                        result = bigFib.fibMatrixBig(fibIdx);
+                        afterTime = getCpuTime();
+                        curRunTime = curRunTime + afterTime - beforeTime;
+                    }
+                    curRunTime = curRunTime/100;
+                } else {
+                    beforeTime = getCpuTime();
+                    result = bigFib.fibMatrixBig(fibIdx);
+                    afterTime = getCpuTime();
+                    curRunTime = afterTime - beforeTime;
+                }
                 System.out.printf("%15d %15s %15s %15d ", N, fibIdx.AbbreviatedValue(), result.AbbreviatedValue(),
                         curRunTime);
 
-                if (N > 2) {
+                if (N > 1) {
                     //The complexity for the matrix fibonacci function is log base 2 (binary digits)
                     //For each binary digit, we perform 1 or 2 matrix multiplications, which are comprised
-                    //of 4 addition (linear) and 4 multiplications (of complexity N^log_2(3))
-                    //so total complexity is X * N^log_2(3)
-                    NToLogThree = Math.pow(N, logBaseTwo(3));
-                    NMinusOneToLogThree = Math.pow(N - 1, logBaseTwo(3));
-                    XVal = Long.parseLong(xValues[X]);
+                    //of 4 addition (linear) and 4 multiplications (of complexity X^log_2(3))
+                    //so total complexity is X * X^log_2(3)
+
+                    //Holds actual value of X (with appropriate number of digits
+                    XVal = (long) (X * Math.pow(10, N-1));
+
+                    //Holds actual value of N with appropriate number of digits
+                    NVal = (long) Math.pow(10, N-1);
                     System.out.printf("%15.3f %15.3f %15.3f \n", (float) curRunTime / prevTime[X],
-                            logBaseTwo(XVal) * Math.pow(Math.log(XVal), logBaseTwo(3)) /
-                                    (logBaseTwo(XVal / 10) * Math.pow(Math.log(XVal / 10), logBaseTwo(3))),
+                            logBaseTwo(XVal) * Math.pow(XVal, logBaseTwo(3)) /
+                                    (logBaseTwo(XVal / 10) * Math.pow(XVal / 10, logBaseTwo(3))),
                             //Based on 10^N-1 so not precise
-                            logBaseTwo((long) Math.pow(10, N - 1)) * NToLogThree /
-                                    (logBaseTwo((long) Math.pow(10, N - 2)) * NMinusOneToLogThree));
+                            logBaseTwo(NVal) * Math.pow(NVal, logBaseTwo(3)) /
+                                    (logBaseTwo(NVal/10) * Math.pow(NVal/10, logBaseTwo(3))));
                 } else {
                     System.out.printf("%15s %15s %15s\n", "na", "na", "na");
                 }
